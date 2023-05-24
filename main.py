@@ -26,7 +26,7 @@ def fix_cords():
 
 
 def find_mean(area):
-    return np.average(area, axis=(0, 1))[0]
+    return np.average(area[:, :, 2])
 
 
 def draw_rectangle(image, cords, color, cutout):
@@ -47,6 +47,11 @@ def click_event(event, x, y, flags, params):
 
 def work_check(avg_arr, state_arr, avg_diff, new_avg):
     # FINISH THIS
+    if avg_arr[1] - avg_arr[0] > avg_diff:  # IF IT STARTS WORKING
+        (state_arr[0], state_arr[1]) = (state_arr[1], True)
+
+    if avg_arr[1] - avg_arr[0] < -avg_diff:  # IF IT STOPS WORKING
+        (state_arr[0], state_arr[1]) = (state_arr[1], False)
     previous_state = state_arr[0]
     current_state = state_arr[1]
     if previous_state:
