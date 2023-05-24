@@ -47,11 +47,16 @@ def click_event(event, x, y, flags, params):
 
 def work_check(avg_arr, state_arr, avg_diff, new_avg):
     # FINISH THIS
+    (avg_arr[0], avg_arr[1]) = (avg_arr[1], new_avg)
     if avg_arr[1] - avg_arr[0] > avg_diff:  # IF IT STARTS WORKING
         (state_arr[0], state_arr[1]) = (state_arr[1], True)
-
-    if avg_arr[1] - avg_arr[0] < -avg_diff:  # IF IT STOPS WORKING
+    elif avg_arr[1] - avg_arr[0] < -avg_diff:  # IF IT STOPS WORKING
         (state_arr[0], state_arr[1]) = (state_arr[1], False)
+    else:
+        if state_arr[0]:
+            state_arr[1] = True
+        else:
+            state_arr[1] = False
     previous_state = state_arr[0]
     current_state = state_arr[1]
     if previous_state:
@@ -70,6 +75,7 @@ while True:
     fix_cords()
     cv2.imshow('Input', frame)
     cv2.setMouseCallback('Input', click_event)
+    draw_rectangle(frame, rectangle, (255, 0, 0), temp)  # WHAT THE HELL
 
     c = cv2.waitKey(1)
     if c == 27:
@@ -78,12 +84,13 @@ while True:
 cam.release()
 cv2.destroyAllWindows()
 
-# async def main():
-#     bot = telegram.Bot(TOKEN)
-#     async with bot:
-#         await bot.send_message(text="wawa", chat_id=CHAT_ID)
-#         await bot.send_document(chat_id=CHAT_ID, document='wawa.gif')
-#
-#
-# if __name__ == '__main__':
-#     asyncio.run(main())
+
+async def main():
+    bot = telegram.Bot(TOKEN)
+    async with bot:
+        if work_check(avg_blue, work_state, 30, find_mean(temp)):  # FIX THIS
+            await bot.send_document(chat_id=CHAT_ID, document='wawa.gif', caption="wawa")
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
