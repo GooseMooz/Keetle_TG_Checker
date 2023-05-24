@@ -1,3 +1,4 @@
+import numpy as np
 from cv2 import cv2
 import asyncio
 import telegram
@@ -10,6 +11,8 @@ TOKEN = os.getenv('TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
 cam = cv2.VideoCapture(0)
 rectangle = [[0, 0], [0, 0]]
+avg_blue = [0.0, 0.0]
+work_state = [False, False]
 
 
 def fix_cords():
@@ -23,32 +26,42 @@ def fix_cords():
 
 
 def find_mean(area):
-    pass
+    return np.average(area, axis=(0, 1))[0]
 
 
 def draw_rectangle(image, cords, color, cutout):
     orig = cutout[cords[0][1] + 10:cords[1][1] - 10, cords[0][0] + 10:cords[1][0] - 10]
     cv2.imshow('Cutout', orig)
+    print(orig[0, 0])
     image[cords[0][1]:cords[1][1], cords[0][0]:cords[1][0]] = color
     image[cords[0][1] + 10:cords[1][1] - 10, cords[0][0] + 10:cords[1][0] - 10] = orig
 
 
 def click_event(event, x, y, flags, params):
-    # FIX THIS
     if event == cv2.EVENT_LBUTTONDOWN:
-        print(x, ' ', y)
         rectangle[0] = [x, y]
 
     if event == cv2.EVENT_RBUTTONDOWN:
-        print(x, ' ', y)
         rectangle[1] = [x, y]
+
+
+def work_check(avg_arr, state_arr, avg_diff, new_avg):
+    # FINISH THIS
+    previous_state = state_arr[0]
+    current_state = state_arr[1]
+    if previous_state:
+        if not current_state:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 while True:
     ret, frame = cam.read()
     temp = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
     frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
-    print(frame[10, 10])
     fix_cords()
     cv2.imshow('Input', frame)
     cv2.setMouseCallback('Input', click_event)
