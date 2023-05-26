@@ -11,7 +11,7 @@ TOKEN = os.getenv('TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
 cam = cv2.VideoCapture(0)
 rectangle = [[0, 0], [0, 0]]
-avg_blue = [40.0, 40.0]
+avg_blue = [90.0, 90.0]
 work_state = [False, False]
 bang = [False]
 
@@ -31,11 +31,11 @@ def find_mean(area):
 
 
 def draw_rectangle(image, cords, color, cutout):
-    orig = cutout[cords[0][1] + 10:cords[1][1] - 10, cords[0][0] + 10:cords[1][0] - 10]
+    orig = cutout[cords[0][1] + 3:cords[1][1] - 3, cords[0][0] + 3:cords[1][0] - 3]
     cv2.imshow('Cutout', orig)
     print(work_check(avg_blue, work_state, 40, find_mean(orig)))
     image[cords[0][1]:cords[1][1], cords[0][0]:cords[1][0]] = color
-    image[cords[0][1] + 10:cords[1][1] - 10, cords[0][0] + 10:cords[1][0] - 10] = orig
+    image[cords[0][1] + 3:cords[1][1] - 3, cords[0][0] + 3:cords[1][0] - 3] = orig
 
 
 def click_event(event, x, y, flags, params):
@@ -79,7 +79,10 @@ async def main():
             temp = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
             frame = cv2.resize(frame, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
             fix_cords()
-            draw_rectangle(frame, rectangle, (68, 54, 189), temp)
+            if not work_state[0]:
+                draw_rectangle(frame, rectangle, (68, 54, 189), temp)
+            else:
+                draw_rectangle(frame, rectangle, (189, 54, 68), temp)
             cv2.imshow('Input', frame)
             cv2.setMouseCallback('Input', click_event)
             if bang[0]:
