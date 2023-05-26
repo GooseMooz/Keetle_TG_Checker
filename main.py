@@ -82,7 +82,7 @@ async def main():
             draw_rectangle(frame, rectangle, (68, 54, 189), temp)
             cv2.imshow('Input', frame)
             cv2.setMouseCallback('Input', click_event)
-            if bang[0]:  # FIX THIS
+            if bang[0]:
                 await bot.send_document(chat_id=CHAT_ID, document='wawa.gif', caption="wawa")
 
             c = cv2.waitKey(1)
